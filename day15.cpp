@@ -23,6 +23,7 @@ pair<int, int> dij_to_dxy(int i, int j) { return {j, -i}; }
 int boti, botj;
 vector<pair<int, int>> neighbors[256];
 vector<vector<bool>> visited;
+vector<pair<int, int>> quick;
 
 bool _should_move(int i, int j, int di, int dj);
 void _move(int i, int j, int di, int dj);
@@ -112,7 +113,7 @@ int main(int argc, char** argv)
 
     cout << "part1: " << solve() << endl;
 
-    map = map_part2; p*=2;
+    map = map_part2; p*=2; visited.clear();
     boti = boti_cpy; botj = botj_cpy*2;
 
     cout << "part2: " << solve() << endl;
@@ -124,6 +125,7 @@ bool _should_move(int i, int j, int di, int dj) {
     for (auto [ni, nj] : neighbors[map[i][j]]) {
         if (visited[i+ni][j+nj]) continue;
         visited[i+ni][j+nj] = true;
+        quick.push_back({i+ni, j+nj});
         if (!coord_ok(i+ni+di, j+nj+dj) || map[i+ni+di][j+nj+dj] == '#') return false;
         if (map[i+ni+di][j+nj+dj] == '.') continue;
         if (!_should_move(i+ni+di, j+nj+dj, di, dj)) return false;
@@ -137,6 +139,7 @@ void _move(int i, int j, int di, int dj) {
     for (auto [ni, nj] : neighbors[map[i][j]]) {
         if (visited[i+ni][j+nj]) continue;
         visited[i+ni][j+nj] = true;
+        quick.push_back({i+ni, j+nj});
         _move(i+ni+di, j+nj+dj, di, dj);
         map[i+ni+di][j+nj+dj] = map[i+ni][j+nj];
         map[i+ni][j+nj] = '.';
@@ -147,8 +150,7 @@ void reset_visited() {
     if (!visited.size()) {
         visited = vector<vector<bool>>(n, vector<bool>(p, false));
     } else {
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < p; j++) visited[i][j] = false;
-        }
+        for (auto [i, j] : quick) visited[i][j] = false;
+        quick.clear();
     }
 }
