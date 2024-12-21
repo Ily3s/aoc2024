@@ -28,6 +28,8 @@ vector<int> As;
 bool solve(int i, uint64_t Alr) {
     if (i==program.size()) return true;
     for (int k = 0; k <= 8; k++) {
+        ptr = 0;
+        A = Alr;
         uint64_t Al = Alr*8+k;
         if ((5^k^(Al>>(k^1)))%8 == program[program.size()-1-i]) {
             As.push_back(k);
